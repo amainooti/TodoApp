@@ -1,17 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:todolist/components/custom_button.dart';
 
 class MyDialog extends StatelessWidget {
-  MyDialog({Key? key}) : super(key: key);
+  final dynamic controller;
+  VoidCallback onSave;
+  VoidCallback onCancel;
 
-  TextEditingController myController = TextEditingController();
+  MyDialog({Key? key,
+    required this.controller,
+    required this.onCancel,
+    required this.onSave
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: AlertDialog(
+    return AlertDialog(
+        backgroundColor: Theme.of(context).primaryColor,
         content: TextField(
-          controller: myController,
+          cursorColor: Colors.black,
+          controller: controller,
           decoration: InputDecoration(
+            hintText: "Add a new task",
+            focusColor: Colors.black,
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black)
+            ),
             border: OutlineInputBorder(),
           ),
         ),
@@ -19,15 +32,12 @@ class MyDialog extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              ElevatedButton(onPressed: (){}, child: Text("cancel")),
+              CustomButton(onPressed: onCancel, buttonName: "cancel"),
              const SizedBox(width: 20,),
-              ElevatedButton(onPressed: (){}, child: Text("Save")),
-
+              CustomButton(onPressed: onSave, buttonName: "Save"),
             ],
           )
-
         ],
-      ),
-    );
+      );
   }
 }

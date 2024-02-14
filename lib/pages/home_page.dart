@@ -12,7 +12,9 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
-  // List of items
+  // List of item
+  TextEditingController myController = TextEditingController();
+
   List todo = [
     ["Swimming practise", false],
     ["violin practise", false],
@@ -26,12 +28,53 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  void showAlertDiaglog(){
-    showDialog(
-        context: context, builder: (contex){
-          return MyDialog();
+  void saveNewTask(){
+    setState(() {
+      todo.add([myController.text, false]);
+      myController.clear();
+    });
+    Navigator.of(context).pop();
+  }
+
+  void deleteTask(int index){
+    setState(() {
+      todo.removeAt(index);
     });
   }
+
+  void updateTask(int index) {
+    myController.text = todo[index][0];
+    showDialog(
+      context: context,
+      builder: (context) {
+        return MyDialog(
+          controller: myController,
+          onCancel: () {
+            Navigator.of(context).pop();
+          },
+          onSave: () {
+            setState(() {
+              todo[index][0] = myController.text;
+            });
+            Navigator.of(context).pop();
+          },
+        );
+      },
+    );
+  }
+
+
+  void showAlertDiaglog(){
+    showDialog(
+        context: context, builder: (context){
+          return MyDialog(controller: 
+          myController, onCancel: (){
+            Navigator.of(context).pop();
+          },
+              onSave: saveNewTask);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,7 +88,9 @@ class _HomePageState extends State<HomePage> {
             return TodoItem(
                 isChecked: todo[index][1],
                 onChanged:(value) => changeCheckState(value, index),
-                todoText: todo[index][0]
+                todoText: todo[index][0],
+                deleteTask: (context) => deleteTask(index),
+                updateTask: (context) => updateTask(index),
             );
       })),
 
